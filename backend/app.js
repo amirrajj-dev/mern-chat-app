@@ -4,7 +4,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import authRoutes from './routes/auth.route.js'
+import { connectToDb } from "./db/connectToDb.js";
+import authRoutes from "./routes/auth.route.js";
 
 dotenv.config();
 const app = express();
@@ -25,8 +26,9 @@ app.use(
   })
 );
 
-app.use('/api/auth' , authRoutes)
+app.use("/api/auth", authRoutes);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await connectToDb();
   console.log(`server is running on port ${PORT} ⚡👺`);
 });
