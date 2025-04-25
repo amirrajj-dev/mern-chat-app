@@ -4,6 +4,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import errorMiddleware from "./middlewares/error.mddleware.js";
 import { connectToDb } from "./db/connectToDb.js";
 import authRoutes from "./routes/auth.route.js";
 
@@ -27,7 +28,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
-
+app.use(errorMiddleware);
 app.listen(PORT, async () => {
   await connectToDb();
   console.log(`server is running on port ${PORT} ⚡👺`);
