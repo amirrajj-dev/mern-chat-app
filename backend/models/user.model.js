@@ -16,7 +16,8 @@ const schema = new mongoose.Schema({
     },
     email : {
         type : String,
-        unique : true
+        unique : true,
+        required : true
     },
     phone : {
         type : String,
@@ -36,11 +37,12 @@ const schema = new mongoose.Schema({
         enum : ['male' , 'female'] 
     },
     resetToken : {
-        type : String
+        type : String,
+        required : false
     },
     resetTokenExpiry : {
-        type : Date,
-        default : Date.now()
+        type : Number,
+        required : false
     }
 },{
     timestamps : true
