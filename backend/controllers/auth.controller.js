@@ -1,9 +1,30 @@
 import usersModel from "../models/user.model.js";
+import otpModel from "../models/otp.model.js";
 import { hash, compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import {
+  generateFiveDigitOTP,
+  signinMailOptionsHtml,
+} from "../utils/helpers.js";
+import dotenv from "dotenv";
+import request from "request";
 
+dotenv.config();
 const emailReg = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 const phoneReg = /^(\+98|0|0098)?9\d{9}$/;
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  pool: true,
+  maxConnections: 5,
+  rateDelta: 20000,
+  rateLimit: 5,
+});
 
 export const signUp = async (req, res, next) => {
   try {
@@ -30,12 +51,10 @@ export const signUp = async (req, res, next) => {
     }
 
     if (password.length < 6 || password.length > 20) {
-      return res
-        .status(400)
-        .json({
-          message: "Password must be between 6 and 20 characters",
-          success: false,
-        });
+      return res.status(400).json({
+        message: "Password must be between 6 and 20 characters",
+        success: false,
+      });
     }
 
     const user = await usersModel.findOne({
@@ -84,7 +103,92 @@ export const signUp = async (req, res, next) => {
 
 export const signIn = async (req, res, next) => {
   try {
-  } catch (error) {}
+    const { phone, email } = req.body;
+    const code = generateFiveDigitOTP();
+    const date = new Date();
+    const expTime = date.getTime() + 60_000; //exires in 60 sec
+    if (phone) {
+      if (!phoneReg.test(phone)) {
+        return res
+          .status(400)
+          .json({ message: "Invalid phone number.", success: false });
+      }
+      const user = await usersModel.findOne({ phone });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: "User not found.", success: false });
+      }
+      request.post(
+        {
+          url: "http://ippanel.com/api/select",
+          body: {
+            op: "pattern",
+            user: "FREE09389829461",
+            pass: "Faraz@2210427304",
+            fromNum: "3000505",
+            toNum: phone,
+            patternCode: "216s18lgedyiryc",
+            inputData: [{ "verification-code": code }],
+          },
+          json: true,
+        },
+        async function (error, response, body) {
+          if (!error && response.statusCode === 200) {
+            await otpModel.create({
+              phone,
+              code,
+              expTime,
+            });
+            return res.status(201).json({
+              message: "Code sent successfully.",
+              success: true,
+            });
+          } else {
+            return res.status(500).json({
+              message: "Unkown Error.",
+              success: true,
+            });
+          }
+        }
+      );
+    }
+
+    if (email) {
+      if (!emailReg.test(email)) {
+        return res.status(400).json({
+          message: "Invalid email address.",
+          success: false,
+        });
+      }
+      const user = await usersModel.findOne({ email });
+      if (!user) {
+        return res.status(400).json({
+          message: "User not found.",
+          success: false,
+        });
+      }
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "کد ورود به Talkify ⚡🤖",
+        html: signinMailOptionsHtml(code),
+      };
+
+      await transporter.sendMail(mailOptions);
+      await otpModel.create({
+        email,
+        code,
+        expTime,
+      });
+      return res.status(200).json({
+        message: "code sent successfully",
+        success: true,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 export const signOut = async (req, res, next) => {
   try {
