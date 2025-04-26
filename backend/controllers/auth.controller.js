@@ -101,6 +101,9 @@ export const signUp = async (req, res, next) => {
   }
 };
 
+
+
+//send code to users by email and phone
 export const signIn = async (req, res, next) => {
   try {
     const { phone, email } = req.body;
@@ -190,6 +193,70 @@ export const signIn = async (req, res, next) => {
     next(error);
   }
 };
+
+//signin logic by code
+export const verifyCode = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+    if (!code?.trim()) {
+      return res.status(400).json({
+        message: "Please Enter The Code",
+        success: false,
+      });
+    }
+
+    const otpRecord = await otpModel.findOne({ code });
+    if (!otpRecord) {
+      return res.status(404).json({
+        message: "Invalid Code",
+        success: false,
+      });
+    }
+
+    if (otpRecord.expTime < Date.now()) {
+      await otpModel.deleteOne({ _id: otpRecord._id });
+      return res.status(401).json({
+        message: "Code Is Expired",
+        success: false,
+      });
+    }
+
+    const user = await usersModel.findOne({
+      $or: [{ email: otpRecord.email }, { phone: otpRecord.phone }],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User Not Found",
+        success: false,
+      });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    res.cookie("chat-app-token", token, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    await otpModel.deleteOne({ _id: otpRecord._id });
+    user.password = undefined;
+    return res.status(200).json({
+      message: "Signed In Succesfully",
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("VerifyCode Error:", error);
+    next(error);
+  }
+}
+
 export const signOut = async (req, res, next) => {
   try {
   } catch (error) {}
@@ -207,10 +274,6 @@ export const resetPassword = async (req, res, next) => {
   } catch (error) {}
 };
 export const changePassword = async (req, res, next) => {
-  try {
-  } catch (error) {}
-};
-export const verifyCode = async (req, res, next) => {
   try {
   } catch (error) {}
 };
