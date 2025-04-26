@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import {
   generateFiveDigitOTP,
   signinMailOptionsHtml,
+  signupWelcomeEmailHtml,
 } from "../utils/helpers.js";
 import dotenv from "dotenv";
 import request from "request";
@@ -14,6 +15,7 @@ dotenv.config();
 const emailReg = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 const phoneReg = /^(\+98|0|0098)?9\d{9}$/;
 
+//only works if user vpn is off
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -73,7 +75,7 @@ export const signUp = async (req, res, next) => {
       name,
       username,
       password: hashedPassword,
-      email: email ? email : null,
+      email: email,
       phone,
       gender,
       avatar: gender === "male" ? boyAvatar : girlAvatar,
@@ -91,6 +93,13 @@ export const signUp = async (req, res, next) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
     newUser.password = undefined;
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Welcome to Chat App ⚡🤖",
+      html: signupWelcomeEmailHtml(newUser.name.split(' ')[0]),
+    };
+    await transporter.sendMail(mailOptions);
     return res.status(201).json({
       message: "User created successfully",
       success: true,
@@ -174,7 +183,7 @@ export const signIn = async (req, res, next) => {
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: user.email,
-        subject: "کد ورود به Talkify ⚡🤖",
+        subject: "otp code for sign in ⚡🤖",
         html: signinMailOptionsHtml(code),
       };
 
