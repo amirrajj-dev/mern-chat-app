@@ -49,3 +49,39 @@ export const sendMessage = async (req , res , next)=>{
         next(error)
     }
 }
+
+export const getMessages = async (req , res , next)=>{
+    try {
+        const {id : userToChatId} = req.params
+        if (!userToChatId){
+            return res.status(400).json({message : "receiver user id is required" , success : false})
+        }
+
+        const senderId = req.user._id
+
+        if (!senderId){
+            return res.status(400).json({message : "sender user id is required" , success : false})
+        }
+
+        const conversation = await conversationModel.findOne({
+            participants : {$all : [senderId , userToChatId]}
+        }).populate({
+            path : "messages",
+            populate : [
+                {
+                    path : "senderId",
+                    select : "name avatar username"
+                },
+                {
+                    path : "receiverId",
+                    select : "name avatar username"
+                }
+            ]
+        })
+
+        return res.status(200).json({message : "messages fethed successfully" , success : true , data : conversation.messages})
+        
+    } catch (error) {
+        next(error)
+    }
+}
