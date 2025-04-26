@@ -2,7 +2,7 @@ import usersModel from "../models/user.model.js";
 import otpModel from "../models/otp.model.js";
 import { hash, compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
+import nodemailer from "nodemailer"
 import {
   generateFiveDigitOTP,
   signinMailOptionsHtml,
@@ -26,6 +26,13 @@ const transporter = nodemailer.createTransport({
   maxConnections: 5,
   rateDelta: 20000,
   rateLimit: 5,
+  secure: true,
+  port: 465,
+  logger : true,
+  debug: true,
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 export const signUp = async (req, res, next) => {
@@ -81,7 +88,7 @@ export const signUp = async (req, res, next) => {
       avatar: gender === "male" ? boyAvatar : girlAvatar,
     });
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
@@ -288,7 +295,11 @@ export const signOut = async (req, res, next) => {
 };
 export const me = async (req, res, next) => {
   try {
-  } catch (error) {}
+    const user = req.user;
+    return res.status(200).json({ message: "Current User Fetched Succesfully", success: true, user });
+  } catch (error) {
+    next(error);
+  }
 };
 export const forgotPassword = async (req, res, next) => {
   try {
