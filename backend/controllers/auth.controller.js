@@ -259,7 +259,23 @@ export const verifyCode = async (req, res, next) => {
 
 export const signOut = async (req, res, next) => {
   try {
-  } catch (error) {}
+    try {
+      const token = req.cookies["chat-app-token"];
+      if (!token) {
+        return res
+          .status(200)
+          .json({ message: "No token provided", success: false });
+      }
+      res.clearCookie("chat-app-token", { path: "/", maxAge: 0 });
+      return res
+        .status(200)
+        .json({ message: "User logged out successfully", success: true });
+    } catch (error) {
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 export const me = async (req, res, next) => {
   try {
