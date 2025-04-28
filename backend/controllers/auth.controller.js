@@ -2,8 +2,9 @@ import usersModel from "../models/user.model.js";
 import otpModel from "../models/otp.model.js";
 import { hash, compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 import {
+  forgotPasswordEmailHtml,
   generateFiveDigitOTP,
   signinMailOptionsHtml,
   signupWelcomeEmailHtml,
@@ -28,7 +29,7 @@ const transporter = nodemailer.createTransport({
   rateLimit: 5,
   secure: true,
   port: 465,
-  logger : true,
+  logger: true,
   debug: true,
   tls: {
     rejectUnauthorized: false,
@@ -104,7 +105,7 @@ export const signUp = async (req, res, next) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Welcome to Chat App ⚡🤖",
-      html: signupWelcomeEmailHtml(newUser.name.split(' ')[0]),
+      html: signupWelcomeEmailHtml(newUser.name.split(" ")[0]),
     };
     await transporter.sendMail(mailOptions);
     return res.status(201).json({
@@ -116,8 +117,6 @@ export const signUp = async (req, res, next) => {
     next(error);
   }
 };
-
-
 
 //send code to users by email and phone
 export const signIn = async (req, res, next) => {
@@ -271,7 +270,7 @@ export const verifyCode = async (req, res, next) => {
     console.error("VerifyCode Error:", error);
     next(error);
   }
-}
+};
 
 export const signOut = async (req, res, next) => {
   try {
@@ -296,14 +295,66 @@ export const signOut = async (req, res, next) => {
 export const me = async (req, res, next) => {
   try {
     const user = req.user;
-    return res.status(200).json({ message: "Current User Fetched Succesfully", success: true, user });
+    return res
+      .status(200)
+      .json({
+        message: "Current User Fetched Succesfully",
+        success: true,
+        user,
+      });
   } catch (error) {
     next(error);
   }
 };
 export const forgotPassword = async (req, res, next) => {
   try {
-  } catch (error) {}
+    const { email } = req.body;
+    if (!email.trim()) {
+      return res
+        .status(400)
+        .json({ message: "email is required", success: false });
+    }
+    if (!emailReg.test(email)) {
+      return res.status(400).json({ message: "invalid email", success: false });
+    }
+
+    const user = await usersModel.findOne({
+      email: email.trim(),
+    });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "user not found", success: false });
+    }
+    const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    await usersModel.findByIdAndUpdate(user._id, {
+      resetToken: resetToken,
+      resetTokenExpiry: new Date(Date.now() + 3600000),
+    });
+
+    const resetUrl = `${
+      process.env.FRONTEND_URL || "http://localhost:5173"
+    }/reset-password/${resetToken}`;
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Recovery 🤖⚡",
+      html: forgotPasswordEmailHtml(resetUrl , user.name),
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      message: "Password reset email sent successfully",
+      success: true,
+      token: resetToken,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 export const resetPassword = async (req, res, next) => {
   try {
