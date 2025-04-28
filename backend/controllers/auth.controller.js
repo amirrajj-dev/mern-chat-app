@@ -358,9 +358,39 @@ export const forgotPassword = async (req, res, next) => {
 };
 export const resetPassword = async (req, res, next) => {
   try {
-  } catch (error) {}
-};
-export const changePassword = async (req, res, next) => {
-  try {
-  } catch (error) {}
+    const { password } = req.body;
+    const { token } = req.params;
+    if (!password.trim().length) {
+      return res
+        .status(400)
+        .json({ message: "Password is required", success: false });
+    }
+    if (password.trim().length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters",
+        success: false,
+      });
+    }
+    const user = await usersModel.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired token", success: false });
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    await usersModel.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+      resetToken: undefined,
+      resetTokenExpiry: undefined,
+    });
+    return res.status(200).json({
+      message: "Password reset successfully",
+      success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
