@@ -4,14 +4,16 @@ import SignIn from "./pages/auth/signin/SignIn"
 import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword"
 import ResetPassword from "./pages/auth/reset-password/ResetPassword"
 import Home from "./pages/home/Home"
+import VerifyCode from "./pages/auth/verify-code/VerifyCode"
 
 const App = () => {
   return (
-    <div className='p-4 transition-colors duration-200'>
+    <div className='transition-colors duration-200'>
       <Routes>
       <Route path="/" element={<Home/>}></Route>
         <Route path="/auth/signup" element={<SignUp/>}></Route>
         <Route path="/auth/signin" element={<SignIn/>}></Route>
+        <Route path="/auth/verify-code" element={<VerifyCode/>}></Route>
         <Route path="/auth/forgot-password" element={<ForgotPassword/>}></Route>
         <Route path="/auth/reset-password" element={<ResetPassword/>}></Route>
       </Routes>
