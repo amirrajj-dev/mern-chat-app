@@ -122,6 +122,12 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   try {
     const { phone, email } = req.body;
+    if (!phone.trim() && !email.trim()) {
+      return res.status(400).json({
+        message: "Please provide email or phone number",
+        success: false,
+      });
+    }
     const code = generateFiveDigitOTP();
     const date = new Date();
     const expTime = date.getTime() + 60_000; //exires in 60 sec
