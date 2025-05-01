@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import MessageContainer from "../../components/ui/MessageContainer";
-import Sidebar from "../../components/ui/Sidebar";
+import Sidebar from "../../components/ui/sidebar/Sidebar";
 
 const Home = () => {
   return (

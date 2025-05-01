@@ -1,0 +1,27 @@
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+
+const SearchInput = () => {
+  return (
+    <motion.div 
+      className="relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div
+        whileHover={{ scale: 1.01 }}
+        className="flex items-center bg-base-100/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-base-content/10"
+      >
+        <Search className="text-base-content/60 mr-2" size={18} />
+        <input
+          type="text"
+          placeholder="Search conversations..."
+          className="flex-1 bg-transparent border-none outline-none text-base-content placeholder-base-content/40 focus:ring-0"
+        />
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default SearchInput;
