@@ -6,7 +6,6 @@ import nodemailer from "nodemailer";
 import {
   forgotPasswordEmailHtml,
   generateFiveDigitOTP,
-  signinMailOptionsHtml,
   signupWelcomeEmailHtml,
 } from "../utils/helpers.js";
 import dotenv from "dotenv";
@@ -118,10 +117,10 @@ export const signUp = async (req, res, next) => {
   }
 };
 
-//send code to users by email and phone
+//send code to users by phone or  signin with email and password
 export const signIn = async (req, res, next) => {
   try {
-    const { phone, email } = req.body;
+    const { phone, email , password } = req.body;
     if (!phone.trim() && !email.trim()) {
       return res.status(400).json({
         message: "Please provide email or phone number",
@@ -185,6 +184,18 @@ export const signIn = async (req, res, next) => {
           success: false,
         });
       }
+      if (!password.trim()) {
+        return res.status(400).json({
+          message: "Please provide password.",
+          success: false,
+        });
+      }
+      if (password.length < 6 || password.length > 20) {
+        return res.status(400).json({
+          message: "Password must be between 6 and 20 characters.",
+          success: false,
+        });
+      }
       const user = await usersModel.findOne({ email });
       if (!user) {
         return res.status(400).json({
@@ -192,22 +203,28 @@ export const signIn = async (req, res, next) => {
           success: false,
         });
       }
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject: "otp code for sign in ⚡🤖",
-        html: signinMailOptionsHtml(code),
-      };
-
-      await transporter.sendMail(mailOptions);
-      await otpModel.create({
-        email,
-        code,
-        expTime,
+      const isMatch = await compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({
+          message: "Invalid password.",
+          success: false,
+        });
+      }
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "30d",
       });
+      res.cookie("chat-app-token", token, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV !== "development",
+        sameSite: "strict",
+        path: "/",
+      });
+      user.password = undefined;
       return res.status(200).json({
-        message: "code sent successfully",
+        message: "User signed in successfully.",
         success: true,
+        user,
       });
     }
   } catch (error) {

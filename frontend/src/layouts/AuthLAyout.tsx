@@ -5,7 +5,7 @@ const AuthLayout : FC<{children: React.ReactNode, title?: string, subtitle?: str
   return (
     <div className="min-h-screen grid grid-cols-1 bg-gradient-to-br from-base-300 to-indigo-950 lg:grid-cols-2">
       {/* Left side - Form */}
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center p-3">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
