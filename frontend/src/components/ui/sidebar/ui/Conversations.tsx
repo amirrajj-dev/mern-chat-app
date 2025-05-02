@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import Conversation from './Conversation';
 
 const Conversations = () => {
-  const conversations = Array(6).fill(null); // duumy for now for ui look test
+  const conversations = Array(6).fill(null); // dummy for now for ui look test
   
   return (
     <div className="flex flex-col gap-1">

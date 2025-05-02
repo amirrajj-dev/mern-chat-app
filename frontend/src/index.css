@@ -2,3 +2,10 @@
 @plugin "daisyui"{
     themes: light --default, dark --prefersdark , forest , halloween , retro , emerald , night;
 }
+
+@layer base {
+    .chat-bg {
+        background: url('/chat-bg.png');
+        background-size: cover;
+    }
+}

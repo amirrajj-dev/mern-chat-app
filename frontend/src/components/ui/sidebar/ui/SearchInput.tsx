@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 
 const SearchInput = () => {
   return (
-    <motion.div 
+    <motion.div
       className="relative"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -17,7 +17,7 @@ const SearchInput = () => {
         <input
           type="text"
           placeholder="Search conversations..."
-          className="flex-1 bg-transparent border-none outline-none text-base-content placeholder-base-content/40 focus:ring-0"
+          className="flex-1 bg-transparent border-none outline-none text-base-content placeholder-base-content/40 focus:ring-0 text-sm sm:text-base"
         />
       </motion.div>
     </motion.div>

@@ -5,11 +5,11 @@ import SearchInput from "./ui/SearchInput";
 
 const Sidebar = () => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="p-4 flex flex-col h-full"
+      className="p-4 flex flex-col h-full min-w-[240px] max-w-full bg-base-200/70 backdrop-blur-md border-r border-base-content/10"
     >
       {/* Search Input */}
       <motion.div
@@ -19,11 +19,10 @@ const Sidebar = () => {
         className="mb-4"
       >
         <SearchInput />
-  
       </motion.div>
 
       {/* Conversations List */}
-      <motion.div 
+      <motion.div
         className="flex-1 overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
