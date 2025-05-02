@@ -1,17 +1,19 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Send, Smile } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Send, Smile } from "lucide-react";
+import { useTheme } from "../../../../store/useTheme";
 type EmojiObject = {
   native: string;
 };
 const MessageInput = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const emojiButtonRef = useRef<HTMLButtonElement>(null);
+  const { theme } = useTheme();
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
@@ -25,8 +27,8 @@ const MessageInput = () => {
   }, []);
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [handleClickOutside]);
 
   const handleEmojiSelect = (emoji: EmojiObject) => {
@@ -78,7 +80,15 @@ const MessageInput = () => {
             <Picker
               data={data}
               onEmojiSelect={handleEmojiSelect}
-              theme="auto"
+              theme={
+                theme === "light"
+                  ? "light"
+                  : theme === "emerald"
+                  ? "light"
+                  : theme === "retro"
+                  ? "light"
+                  : "dark"
+              }
               emojiSize={20}
               previewPosition="none"
               skinTonePosition="none"

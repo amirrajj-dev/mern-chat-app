@@ -5,8 +5,14 @@ import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword"
 import ResetPassword from "./pages/auth/reset-password/ResetPassword"
 import Home from "./pages/home/Home"
 import VerifyCode from "./pages/auth/verify-code/VerifyCode"
+import { useTheme } from "./store/useTheme"
+import { useEffect } from "react"
 
 const App = () => {
+  const {initializeTheme} = useTheme();
+  useEffect(()=>{
+    initializeTheme()
+  } , [initializeTheme])
   return (
     <div className='transition-colors duration-200'>
       <Routes>

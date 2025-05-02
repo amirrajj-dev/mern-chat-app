@@ -3,12 +3,14 @@ import { useState } from "react";
 import MessageContainer from "../../components/ui/messages/MessageContainer";
 import Sidebar from "../../components/ui/sidebar/Sidebar";
 import { Menu } from "lucide-react";
+import Prefrences from "../../components/ui/prefrences/Prefrences";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen chat-bg p-4 flex flex-col items-center justify-center">
+    <div className="min-h-screen chat-bg p-4 flex flex-col gap-1 items-center justify-center">
+      <Prefrences/>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
