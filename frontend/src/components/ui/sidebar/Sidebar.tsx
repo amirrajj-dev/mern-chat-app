@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import Conversations from "./Conversations";
-import LogOutBtn from "./LogOutBtn";
-import SearchInput from "./SearchInput";
+import Conversations from "./ui/Conversations";
+import LogOutBtn from "./ui/LogOutBtn";
+import SearchInput from "./ui/SearchInput";
 
 const Sidebar = () => {
   return (
