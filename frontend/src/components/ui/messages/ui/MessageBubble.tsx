@@ -37,7 +37,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ sender, text, timestamp }) => {
           }`}
         >
           <p className="break-words leading-snug">{text}</p>
-          <span className="text-xs text-base-content/60 mt-1 block text-left">
+          <span className="text-xs mt-1 block text-left">
             {timestamp} pm
           </span>
         </div>

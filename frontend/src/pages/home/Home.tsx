@@ -9,7 +9,7 @@ const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen chat-bg p-4 flex flex-col gap-1 items-center justify-center">
+    <div className="min-h-screen chat-bg p-2 sm:p-4 flex flex-col gap-1 items-center justify-center">
       <Prefrences/>
       <motion.div
         initial={{ opacity: 0, y: 20 }}

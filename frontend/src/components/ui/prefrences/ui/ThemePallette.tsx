@@ -1,8 +1,10 @@
 import { Palette } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../../../store/useTheme";
 import {Check} from 'lucide-react'
+import useSound from "use-sound";
+import { useSoundStore } from "../../../../store/useSound";
 
 const themes = [
   { theme: "light", bg: "bg-white", text: "text-base-300" },
@@ -41,18 +43,22 @@ const itemVariants = {
 };
 
 const ThemePallette = () => {
-  const [showThemePallette, setShowThemePallette] = React.useState(false);
+  const [showThemePallette, setShowThemePallette] = useState(false);
   const {setTheme , theme : currrentTheme} = useTheme()
-
+  const [mouseClickSound] = useSound('/sounds/mouse-click.mp3')
+  const {soundEnabled} = useSoundStore()
   const handleChangeTheme = (theme: string) => {
     setShowThemePallette(false);
     setTheme(theme);
+    if (soundEnabled){
+      mouseClickSound()
+    }
   };
 
   return (
     <div className="relative z-50">
       <motion.button
-        onClick={() => setShowThemePallette((prev) => !prev)}
+        onClick={() => {setShowThemePallette((prev) => !prev);if(soundEnabled) mouseClickSound()}}
         initial={{opacity : 0 , x : -100}}
         animate={{opacity : 1 , x : 0}}
         transition={{duration : 0.3 , type : 'spring' , stiffness : 180 , damping : 18}}
