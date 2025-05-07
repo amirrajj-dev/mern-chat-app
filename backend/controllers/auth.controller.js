@@ -106,7 +106,11 @@ export const signUp = async (req, res, next) => {
       subject: "Welcome to Chat App ⚡🤖",
       html: signupWelcomeEmailHtml(newUser.name.split(" ")[0]),
     };
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.log(error);
+    }
     return res.status(201).json({
       message: "User created successfully",
       success: true,
