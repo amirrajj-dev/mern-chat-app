@@ -4,10 +4,13 @@ import MessageContainer from "../../components/ui/messages/MessageContainer";
 import Sidebar from "../../components/ui/sidebar/Sidebar";
 import { Menu } from "lucide-react";
 import Prefrences from "../../components/ui/prefrences/Prefrences";
+import { useMeQuery } from "../../hooks/useMeQuery";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {data : user} = useMeQuery()
 
+  console.log(user);
   return (
     <div className="min-h-screen chat-bg p-2 sm:p-4 flex flex-col gap-1 items-center justify-center">
       <Prefrences/>

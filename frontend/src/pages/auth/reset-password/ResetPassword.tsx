@@ -2,9 +2,12 @@ import { motion } from "framer-motion";
 import AuthLayout from "../../../layouts/AuthLAyout";
 import { Link} from "react-router-dom";
 import { MoveLeft } from "lucide-react";
+import { useMeQuery } from "../../../hooks/useMeQuery";
 
 const ResetPassword = () => {
+ const {data : user} = useMeQuery()
 
+  console.log(user);
   return (
     <AuthLayout 
       title="Create New Password" 

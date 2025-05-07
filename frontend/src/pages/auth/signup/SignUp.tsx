@@ -1,11 +1,51 @@
 import { motion } from "framer-motion";
 import AuthLayout from "../../../layouts/AuthLAyout";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SignUpSchemaType, schema } from "../../../validations/signupSchema";
+import { Eye, EyeOff, Loader } from "lucide-react";
+import { useState } from "react";
+import FormError from "../../../components/ui/auth/FromError";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../../configs/axios";
+import { toast } from "sonner";
+import {useNavigate} from 'react-router-dom'
+import { AxiosError } from "axios";
 
 const SignUp = () => {
+  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const queryClient = useQueryClient()
+  const {mutate : signup , isPending , isSuccess} = useMutation({
+    mutationFn : async (data : SignUpSchemaType)=>{
+      const res = await axiosInstance.post('/api/auth/signup' , data)
+      return res.data
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['me'], data.user); // Cache user data
+      toast.success('Signed up successfully');
+      navigate('/');
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      toast.error(err.response?.data.message || 'Signup failed');
+    },
+  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, touchedFields},
+  } = useForm<SignUpSchemaType>({
+    resolver: zodResolver(schema),
+    mode: "onBlur",
+  });
+
+  const onSubmit = async (data: SignUpSchemaType) => {
+    signup(data)
+  };
   return (
-    <AuthLayout 
-      title="Create Your Account" 
+    <AuthLayout
+      title="Create Your Account"
       subtitle="Join us today - it takes less than a minute"
     >
       <motion.div
@@ -14,17 +54,18 @@ const SignUp = () => {
         transition={{ duration: 0.5 }}
         className="flex flex-col items-center lg:hidden mb-6"
       >
-        <img 
-          src="https://img.icons8.com/?size=512w&id=yg_1BRRCDTMO&format=png" 
-          alt="Chat App Logo" 
+        <img
+          src="https://img.icons8.com/?size=512w&id=yg_1BRRCDTMO&format=png"
+          alt="Chat App Logo"
           className="size-20 mb-4"
         />
       </motion.div>
-      
+
       <motion.form
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
+        onSubmit={handleSubmit(onSubmit)}
         className="backdrop-blur-sm bg-white/5 p-8 rounded-2xl shadow-lg space-y-4 border border-white/10"
       >
         <div className="grid grid-cols-2 gap-4">
@@ -33,22 +74,32 @@ const SignUp = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <input 
-              type="text" 
-              placeholder="Full Name" 
-              className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20" 
+            <input
+              {...register("name")}
+              type="text"
+              placeholder="Full Name"
+              className={`input bg-base-content/5 border ${
+                errors.name ? "border-rose-500" : "border-transparent"
+              } outline-none text-base-content placeholder-base-content/60 w-full focus:ring-1 focus:ring-base-content/30`}
             />
+            {errors.name && touchedFields.name && (
+              <FormError message={errors.name.message!} />
+            )}
           </motion.div>
           <motion.div
             initial={{ x: 10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <input 
-              type="text" 
-              placeholder="Username" 
-              className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20" 
+            <input
+              {...register("username")}
+              type="text"
+              placeholder="Username"
+              className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
             />
+            {errors.username && touchedFields.username && (
+              <FormError message={errors.username.message!} />
+            )}
           </motion.div>
         </div>
 
@@ -57,23 +108,41 @@ const SignUp = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <input 
-            type="email" 
-            placeholder="Email" 
-            className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20" 
+          <input
+            {...register("email")}
+            type="email"
+            placeholder="Email"
+            className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
           />
+          {errors.email && touchedFields.email && (
+            <FormError message={errors.email.message!} />
+          )}
         </motion.div>
 
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
+          className="relative"
         >
-          <input 
-            type="password" 
-            placeholder="Password" 
-            className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20" 
+          <input
+            {...register("password")}
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
           />
+          {errors.password && touchedFields.password && (
+            <FormError message={errors.password.message!} />
+          )}
+          <button
+            className="absolute z-50 cursor-pointer top-2 right-2 text-base-content/50"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowPassword((prev) => !prev);
+            }}
+          >
+            {showPassword ? <EyeOff /> : <Eye />}
+          </button>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -82,22 +151,48 @@ const SignUp = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.7 }}
           >
-            <input 
-              type="tel" 
-              placeholder="Phone" 
-              className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20" 
+            <input
+              {...register("phone")}
+              type="tel"
+              placeholder="Phone"
+              className="input bg-base-content/5 border-none outline-none text-base-content placeholder-base-content/60 w-full focus:border-none focus:outline-none focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
             />
+            {errors.phone && touchedFields.phone && (
+              <FormError message={errors.phone.message!} />
+            )}
           </motion.div>
           <motion.div
             initial={{ x: 10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <select className="bg-base-content/5 select border-none outline-none focus:border-none focus:outline-none border-base-content/10 text-base-content placeholder-base-content/60 w-full focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20">
-              <option disabled selected className="bg-base-300/80 blur-lg text-base-content">Gender</option>
-              <option className="bg-base-300/80 blur-lg text-base-content">Male</option>
-              <option className="bg-base-300/80 blur-lg text-base-content">Female</option>
+            <select
+              {...register("gender")}
+              className="bg-base-content/5 select border-none outline-none focus:border-none focus:outline-none border-base-content/10 text-base-content placeholder-base-content/60 w-full focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
+            >
+              <option
+                disabled
+                selected
+                className="bg-base-300/80 blur-lg text-base-content"
+              >
+                Gender
+              </option>
+              <option
+                value={"male"}
+                className="bg-base-300/80 blur-lg text-base-content"
+              >
+                Male
+              </option>
+              <option
+                value={"female"}
+                className="bg-base-300/80 blur-lg text-base-content"
+              >
+                Female
+              </option>
             </select>
+            {errors.gender && touchedFields.gender && (
+              <FormError message={errors.gender.message!} />
+            )}
           </motion.div>
         </div>
 
@@ -108,15 +203,22 @@ const SignUp = () => {
           className="pt-2"
         >
           <motion.button
-            whileHover={{ 
+            disabled={isPending || isSuccess}
+            whileHover={{
               scale: 1.02,
-              backgroundColor: "rgba(99, 102, 241, 0.9)"
+              backgroundColor: "rgba(99, 102, 241, 0.9)",
             }}
             whileTap={{ scale: 0.98 }}
-            className="btn bg-indigo-600 hover:bg-indigo-700 border-none text-white w-full mt-2"
+            className="btn bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed border-none text-white w-full mt-2"
             type="submit"
           >
-            Sign Up
+            {isPending ? (
+              <span className="loading loading-spinner">
+                <Loader/>
+              </span>
+            ) : isSuccess ?  (
+              'Signed Up !'
+            ) : "Sign Up"}
           </motion.button>
         </motion.div>
 
@@ -134,7 +236,10 @@ const SignUp = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
         >
-          <Link to="/auth/signin" className="btn btn-outline border-white/20 hover:bg-white/5 hover:border-white/30 text-white w-full">
+          <Link
+            to="/auth/signin"
+            className="btn btn-outline border-white/20 hover:bg-white/5 hover:border-white/30 text-white w-full"
+          >
             Login Instead
           </Link>
         </motion.div>
