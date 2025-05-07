@@ -1,10 +1,11 @@
+import { useMeQuery } from '../../../hooks/useMeQuery'
 import MessageHeader from './ui/MessageHeader'
 import MessageInput from './ui/MessageInput'
 import Messages from './ui/Messages'
 import NoChatSelected from './ui/NoChatSelected'
 
 const MessageContainer = () => {
-  const user = true //no user for now 
+  const user = false
   if (user){
     return (
       <div className="h-full relative overflow-hidden flex flex-col">

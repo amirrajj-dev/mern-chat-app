@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import SignUp from "./pages/auth/signup/SignUp";
 import SignIn from "./pages/auth/signin/SignIn";
 import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword";
@@ -9,16 +9,18 @@ import { useTheme } from "./store/useTheme";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { useMeQuery } from "./hooks/useMeQuery";
-import { Navigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
+
 const App = () => {
   const { initializeTheme } = useTheme();
+  const location = useLocation();
   const { data: currentUser, isLoading } = useMeQuery();
+
   useEffect(() => {
     initializeTheme();
   }, [initializeTheme]);
-  console.log(isLoading);
+
   if (isLoading) {
     return (
       <div className="flex h-screen chat-bg items-center justify-center flex-col gap-4">
@@ -41,33 +43,43 @@ const App = () => {
     );
   }
 
+  const isAuthenticated = !!currentUser;
+
   return (
     <div className="transition-colors duration-200">
       <Routes>
         <Route
           path="/"
-          element={currentUser ? <Home /> : <Navigate to="/auth/signin" />}
-        ></Route>
+          element={
+            isAuthenticated ? (
+              <Home />
+            ) : (
+              location.pathname !== "/auth/signin" && (
+                <Navigate to="/auth/signin" replace />
+              )
+            )
+          }
+        />
         <Route
           path="/auth/signup"
-          element={currentUser ? <Navigate to="/" /> : <SignUp />}
-        ></Route>
+          element={!isAuthenticated ? <SignUp /> : <Navigate to="/" replace />}
+        />
         <Route
           path="/auth/signin"
-          element={currentUser ? <Navigate to="/" /> : <SignIn />}
-        ></Route>
+          element={!isAuthenticated ? <SignIn /> : <Navigate to="/" replace />}
+        />
         <Route
           path="/auth/verify-code"
-          element={currentUser ? <Navigate to="/" /> : <VerifyCode />}
-        ></Route>
+          element={!isAuthenticated ? <VerifyCode /> : <Navigate to="/" replace />}
+        />
         <Route
           path="/auth/forgot-password"
-          element={currentUser ? <Navigate to="/" /> : <ForgotPassword />}
-        ></Route>
+          element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/" replace />}
+        />
         <Route
           path="/auth/reset-password/:token"
-          element={currentUser ? <Navigate to="/" /> : <ResetPassword />}
-        ></Route>
+          element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/" replace />}
+        />
       </Routes>
       <Toaster />
     </div>
