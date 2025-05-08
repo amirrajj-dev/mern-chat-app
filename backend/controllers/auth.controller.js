@@ -240,9 +240,9 @@ export const signIn = async (req, res, next) => {
 export const verifyCode = async (req, res, next) => {
   try {
     const { code } = req.body;
-    if (!code?.trim()) {
+    if (!code?.trim() || code.length !== 5) {
       return res.status(400).json({
-        message: "Please Enter The Code",
+        message: "Please Enter The Valid Code",
         success: false,
       });
     }
