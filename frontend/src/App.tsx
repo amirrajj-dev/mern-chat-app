@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { useMeQuery } from "./hooks/useMeQuery";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
+import NotFound from "./pages/notfound/NotFound";
 
 const App = () => {
   const { initializeTheme } = useTheme();
@@ -80,6 +81,7 @@ const App = () => {
           path="/auth/reset-password/:token"
           element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/" replace />}
         />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
       <Toaster />
     </div>
