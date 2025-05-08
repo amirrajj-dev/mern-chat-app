@@ -125,7 +125,7 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   try {
     const { phone, email , password } = req.body;
-    if (!phone.trim() && !email.trim()) {
+    if (!phone?.trim() && !email?.trim()) {
       return res.status(400).json({
         message: "Please provide email or phone number",
         success: false,

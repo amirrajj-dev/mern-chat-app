@@ -31,8 +31,12 @@ export const schema = z.object({
     .max(20, "password should be atmost 20 characters long")
     .regex(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-      "password should contain atleast 1 special character,one uppercase letter , one lowercase letter and no numbers"
+      "password should contain atleast 1 special character,one uppercase letter , one lowercase letter and numbers"
     ),
-});
+}).refine((data)=>{
+  //email or password not both
+  if(data.email && data.password) return false;
+  return true;
+})
 
 export type SignUpSchemaType = z.infer<typeof schema>;
