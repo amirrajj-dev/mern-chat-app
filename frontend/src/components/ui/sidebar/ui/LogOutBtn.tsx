@@ -4,10 +4,12 @@ import { LogOut } from "lucide-react";
 import { axiosInstance } from "../../../../configs/axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useConversationStore } from "../../../../store/useConveration";
 
 const LogOutBtn = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const {setSelectedUser} = useConversationStore()
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       await axiosInstance.get("/api/auth/signout");
@@ -15,6 +17,7 @@ const LogOutBtn = () => {
     onSuccess: () => {
       toast.success("Logged out successfully");
       queryClient.removeQueries({ queryKey: ["me"] });
+      setSelectedUser(null)
       navigate("/");
       
     },
