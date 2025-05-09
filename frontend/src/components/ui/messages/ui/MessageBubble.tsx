@@ -2,13 +2,13 @@ import { FC } from "react";
 import { motion } from "framer-motion";
 
 interface MessageBubbleProps {
-  id: number;
   text: string;
   sender: string;
   timestamp: string;
+  avatar : string
 }
 
-const MessageBubble: FC<MessageBubbleProps> = ({ sender, text, timestamp }) => {
+const MessageBubble: FC<MessageBubbleProps> = ({ sender, text, timestamp , avatar }) => {
   const isCurrentUser = sender === "currentUser";
 
   return (
@@ -23,7 +23,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ sender, text, timestamp }) => {
           <div className="w-8 sm:w-10 rounded-full">
             <img
               alt="User avatar"
-              src="https://avatar.iran.liara.run/public/boy?username=ali"
+              src={avatar}
               className="object-cover"
             />
           </div>
@@ -38,7 +38,7 @@ const MessageBubble: FC<MessageBubbleProps> = ({ sender, text, timestamp }) => {
         >
           <p className="break-words leading-snug">{text}</p>
           <span className="text-xs mt-1 block text-left">
-            {timestamp} pm
+            {timestamp}
           </span>
         </div>
       </div>

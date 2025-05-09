@@ -16,8 +16,8 @@ export interface UserI {
 
 export interface MessageI {
     _id : string;
-    senderId : string;
-    receiverId : string;
+    senderId : UserI;
+    receiverId : UserI;
     message : string;
     createdAt : Date;
 }

@@ -79,7 +79,7 @@ export const getMessages = async (req , res , next)=>{
             ]
         })
 
-        return res.status(200).json({message : "messages fethed successfully" , success : true , data : conversation.messages})
+        return res.status(200).json({message : "messages fethed successfully" , success : true , data : conversation?.messages || []})
         
     } catch (error) {
         next(error)

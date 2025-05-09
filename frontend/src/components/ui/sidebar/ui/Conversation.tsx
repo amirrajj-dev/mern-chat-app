@@ -1,18 +1,22 @@
 import { motion } from "framer-motion";
 import React, { useState } from 'react';
+import { UserI } from "../../../../interfaces/interfaces";
+import { useConversationStore } from "../../../../store/useConveration";
 
 interface ConversationProps {
-  username : string;
-  avatar : string
+  user : UserI;
+  handleSelectUser : (user : UserI) => void;
 }
 
-const Conversation : React.FC<ConversationProps> = ({avatar , username}) => {
+const Conversation : React.FC<ConversationProps> = ({user , handleSelectUser}) => {
   const [isOnline, setIsOnline] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
+  const {selectedUser} = useConversationStore()
+  const isSelected = user._id === selectedUser?._id;
   return (
     <motion.div 
-      className={`p-3 transition-all cursor-pointer border-b border-base-content/10 ${isHovered ? 'bg-base-content/5' : 'hover:bg-base-content/5'}`}
+      onClick={() => handleSelectUser(user)}
+      className={`p-3 transition-all cursor-pointer border-b border-base-content/10 ${isHovered ? 'bg-base-content/5' : 'hover:bg-base-content/5'} ${isSelected ? 'bg-base-content/10' : ''}`}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
@@ -24,7 +28,7 @@ const Conversation : React.FC<ConversationProps> = ({avatar , username}) => {
               whileHover={{ scale: 1.05 }}
             >
               <img 
-                src={avatar} 
+                src={user.avatar} 
                 className='size-full rounded-full object-cover' 
                 alt="avatar" 
               />
@@ -38,7 +42,7 @@ const Conversation : React.FC<ConversationProps> = ({avatar , username}) => {
             )}
           </div>
           <div>
-            <p className="font-medium">{username}</p>
+            <p className="font-medium">{user.username}</p>
             <p className="text-xs text-base-content/60">Last message...</p>
           </div>
         </div>

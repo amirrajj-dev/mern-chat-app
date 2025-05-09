@@ -9,6 +9,7 @@ import useSound from "use-sound";
 type EmojiObject = {
   native: string;
 };
+
 const MessageInput = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
@@ -54,6 +55,7 @@ const MessageInput = () => {
     <div className="mt-auto p-4 flex items-center gap-2 w-full relative">
       <input
         ref={inputRef}
+        id="messageInput"
         value={message}
         onChange={(e) =>{setMessage(e.target.value); if (soundEnabled) {keyStroke1Sound(); keyStroke2Sound(); keyStroke3Sound(); keyStroke4Sound();}} }
         type="text"

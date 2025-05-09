@@ -5,8 +5,10 @@ import { axiosInstance } from "../../../../configs/axios";
 import { UserI } from "../../../../interfaces/interfaces";
 import ConversationSkeleton from "../../skeletons/ConversationSkeleton";
 import { useSidebarUsers } from "../../../../store/useSidebarUsers";
+import { useConversationStore } from "../../../../store/useConveration";
 const Conversations = () => {
   const { filteredUsers, setAllUsers, query } = useSidebarUsers();
+  const {setSelectedUser} = useConversationStore()
   const filtered = filteredUsers();
   const isSeachActive = filtered.length > 0 && query.length > 0;
   const { data: conversations, isPending } = useQuery({
@@ -20,14 +22,18 @@ const Conversations = () => {
   });
   const conversationsToShow = isSeachActive ? filtered : conversations;
 
+  const handleSelectUser = (user : UserI)=>{
+    setSelectedUser(user)
+  }
+
   return (
     <div className="flex flex-col gap-1">
       {!isPending
         ? conversationsToShow?.map((conversation) => (
             <Conversation
               key={conversation._id}
-              avatar={conversation.avatar}
-              username={conversation.username}
+              user={conversation}
+              handleSelectUser={handleSelectUser}
             />
           ))
         : Array.from({ length: 6 }).map((_, index) => (
