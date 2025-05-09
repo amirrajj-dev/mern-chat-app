@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
+import { useSidebarUsers } from "../../../../store/useSidebarUsers";
 
 const SearchInput = () => {
+  const { query, setQuery} = useSidebarUsers();
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
   return (
     <motion.div
       className="relative"
@@ -15,6 +22,8 @@ const SearchInput = () => {
       >
         <Search className="text-base-content/60 mr-2" size={18} />
         <input
+          value={query}
+          onChange={(e) => handleSearch(e)}
           type="text"
           placeholder="Search conversations..."
           className="flex-1 bg-transparent border-none outline-none text-base-content placeholder-base-content/40 focus:ring-0 text-sm sm:text-base"

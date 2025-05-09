@@ -1,7 +1,12 @@
 import { motion } from "framer-motion";
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-const Conversation = () => {
+interface ConversationProps {
+  username : string;
+  avatar : string
+}
+
+const Conversation : React.FC<ConversationProps> = ({avatar , username}) => {
   const [isOnline, setIsOnline] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -19,9 +24,9 @@ const Conversation = () => {
               whileHover={{ scale: 1.05 }}
             >
               <img 
-                src="https://avatar.iran.liara.run/public/boy?username=ali" 
+                src={avatar} 
                 className='size-full rounded-full object-cover' 
-                alt="profile" 
+                alt="avatar" 
               />
             </motion.div>
             {isOnline && (
@@ -33,7 +38,7 @@ const Conversation = () => {
             )}
           </div>
           <div>
-            <p className="font-medium">John Doe</p>
+            <p className="font-medium">{username}</p>
             <p className="text-xs text-base-content/60">Last message...</p>
           </div>
         </div>

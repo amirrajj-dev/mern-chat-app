@@ -24,6 +24,8 @@ const SignUp = () => {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['me'], data.user); // Cache user data
+      // invalidate sidebar conversations
+      queryClient.invalidateQueries({queryKey : ['conversations']});
       toast.success('Signed up successfully');
       navigate('/');
     },
@@ -31,6 +33,7 @@ const SignUp = () => {
       toast.error(err.response?.data.message || 'Signup failed');
     },
   })
+
   const {
     register,
     handleSubmit,
@@ -43,6 +46,7 @@ const SignUp = () => {
   const onSubmit = async (data: SignUpSchemaType) => {
     signup(data)
   };
+
   return (
     <AuthLayout
       title="Create Your Account"
@@ -167,12 +171,13 @@ const SignUp = () => {
             transition={{ delay: 0.8 }}
           >
             <select
+            defaultValue={''}
               {...register("gender")}
               className="bg-base-content/5 select border-none outline-none focus:border-none focus:outline-none border-base-content/10 text-base-content placeholder-base-content/60 w-full focus:ring-1 focus:ring-base-content/30 focus:border-base-content/20"
             >
               <option
+                value={''}
                 disabled
-                selected
                 className="bg-base-300/80 blur-lg text-base-content"
               >
                 Gender
