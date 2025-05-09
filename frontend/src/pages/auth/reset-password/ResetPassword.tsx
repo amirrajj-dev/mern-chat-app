@@ -20,7 +20,7 @@ const ResetPassword = () => {
         className="flex flex-col items-center lg:hidden mb-6"
       >
         <img 
-          src="https://img.icons8.com/?size=512w&id=yg_1BRRCDTMO&format=png" 
+          src="/logo.png" 
           alt="Chat App Logo" 
           className="size-20 mb-4"
         />

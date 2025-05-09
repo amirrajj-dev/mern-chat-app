@@ -25,7 +25,7 @@ const AuthLayout : FC<{children: React.ReactNode, title?: string, subtitle?: str
           className="text-center max-w-md"
         >
           <img 
-            src="https://img.icons8.com/?size=512w&id=yg_1BRRCDTMO&format=png" 
+            src="/logo.png" 
             alt="Chat App Logo" 
             className="w-32 h-32 mx-auto mb-6"
           />

@@ -18,7 +18,7 @@ const NotFound = () => {
           className="flex justify-center mb-6"
         >
           <img
-            src="https://img.icons8.com/?size=512w&id=yg_1BRRCDTMO&format=png"
+            src="/logo.png"
             alt="Chat App Logo"
             className="size-30 drop-shadow-lg"
           />
