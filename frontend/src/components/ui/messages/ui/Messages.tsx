@@ -1,15 +1,18 @@
 import MessageBubble from "./MessageBubble";
 import MessageBubbleSkeleton from "../../skeletons/MessageBubbleSkeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useConversationStore } from "../../../../store/useConveration";
 import { axiosInstance } from "../../../../configs/axios";
 import { MessageI } from "../../../../interfaces/interfaces";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { useSocketContext } from "../../../../contexts/SocketContext";
 
 const Messages = () => {
   const { selectedUser } = useConversationStore();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const { socket } = useSocketContext();
+  const queryClient = useQueryClient();
   const {
     data: messages,
     isLoading,
@@ -37,6 +40,27 @@ const Messages = () => {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (message : MessageI) => {
+      console.log(message);
+      queryClient.setQueryData(
+        ["messages", selectedUser?._id],
+        (oldData: MessageI[] | undefined) => {
+          if (!oldData) return [message];
+          return [...oldData, message];
+        }
+      );
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [socket, queryClient, selectedUser?._id]);
 
   if (!selectedUser) return null;
 

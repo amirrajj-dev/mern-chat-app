@@ -42,6 +42,7 @@ const MessageInput = () => {
       queryClient.invalidateQueries({queryKey : ["messages", selectedUser?._id]});
     },
     onError : (err : AxiosError<{message : string}>)=>{
+      console.log(err);
       toast.error(err.response?.data.message || 'Failed to send message')
     }
   })
