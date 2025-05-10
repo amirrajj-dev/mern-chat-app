@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../../../configs/axios";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { useSocketContext } from "../../../../contexts/SocketContext";
 type EmojiObject = {
   native: string;
 };
@@ -30,6 +31,7 @@ const MessageInput = () => {
   const [mouseSoundClick] = useSound('/sounds/mouse-click.mp3')
   const {selectedUser} = useConversationStore()
   const queryClient = useQueryClient()
+  const {socket} = useSocketContext()
   const {mutate : sendMessage , isPending} = useMutation({
     mutationFn: async (message: string) =>{
       const {data} = await axiosInstance.post(`/api/messages/send/${selectedUser?._id}` , {message})
@@ -77,6 +79,20 @@ const MessageInput = () => {
     }
   }
 
+  const handleTyping = () => {
+    if (socket && message.length > 0) {
+      socket.emit("typing", { receiverId: selectedUser?._id });
+    }
+  };
+  
+  useEffect(() => {
+    const typingTimeout = setTimeout(() => {
+      handleTyping();
+    }, 500);
+  
+    return () => clearTimeout(typingTimeout);
+  }, [message]);
+
   return (
     <div className="mt-auto p-4 flex items-center gap-2 w-full relative">
       <input
@@ -110,7 +126,7 @@ const MessageInput = () => {
       onClick={handleSendMessage}
         aria-label="Send message"
         disabled={isPending}
-        className="absolute right-6 bottom-6 btn btn-circle bg-base-content/5 text-base-content/70 hover:bg-base-content/10 border-none"
+        className="absolute right-6 bottom-6 btn btn-circle bg-base-content/5 text-base-content/70 hover:bg-base-content/10 border-none disabled:cursor-not-allowed"
       >
         {isPending ? (
           <span className="loading loading-spinner loading-md">

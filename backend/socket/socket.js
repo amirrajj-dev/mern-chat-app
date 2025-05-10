@@ -24,11 +24,21 @@ io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
   
     if (userId) {
-      socket.userId = userId; // ✅ Attach it directly to the socket
+      socket.userId = userId;
       socketMap[userId] = socket.id;
     }
   
     io.emit("onlineUsers", Object.keys(socketMap));
+
+    socket.on("typing", (data) => {
+      console.log(data);
+      const { receiverId } = data;
+      const receiverSocketId = socketMap[receiverId];
+      if (receiverSocketId) {
+        console.log('heeeeeellllllll yeeaahhhhh');
+        io.to(receiverSocketId).emit("typing", { userId: socket.userId });
+      }
+    });
   
     socket.on("disconnect", () => {
       console.log("a user disconnected =>", socket.id);

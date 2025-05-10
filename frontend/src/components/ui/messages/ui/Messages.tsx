@@ -45,7 +45,6 @@ const Messages = () => {
     if (!socket) return;
 
     const handleNewMessage = (message : MessageI) => {
-      console.log(message);
       queryClient.setQueryData(
         ["messages", selectedUser?._id],
         (oldData: MessageI[] | undefined) => {
