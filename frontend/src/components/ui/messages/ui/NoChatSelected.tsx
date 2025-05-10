@@ -30,8 +30,12 @@ const NoChatSelected = () => {
       </h1>
 
       <p className="text-white/70 mb-8 text-sm sm:text-base leading-relaxed">
-        Select a conversation on the left to start messaging. This area will
+        {window.innerWidth >= 768 ? `
+          Select a conversation on the left to start messaging. This area will
         update when you choose a chat.
+        ` : `
+          click on the toggle menu button on the top right to select a conversation
+        `}
       </p>
 
       <motion.div

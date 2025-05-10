@@ -6,11 +6,13 @@ import { UserI } from "../../../../interfaces/interfaces";
 import ConversationSkeleton from "../../skeletons/ConversationSkeleton";
 import { useSidebarUsers } from "../../../../store/useSidebarUsers";
 import { useConversationStore } from "../../../../store/useConveration";
+import { useSidebar } from "../../../../store/useSidebar";
 const Conversations = () => {
   const { filteredUsers, setAllUsers, query } = useSidebarUsers();
-  const {setSelectedUser} = useConversationStore()
+  const { setSelectedUser } = useConversationStore();
   const filtered = filteredUsers();
   const isSeachActive = filtered.length > 0 && query.length > 0;
+  const { setIsSidebarOpen } = useSidebar();
   const { data: conversations, isPending } = useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
@@ -22,9 +24,10 @@ const Conversations = () => {
   });
   const conversationsToShow = isSeachActive ? filtered : conversations;
 
-  const handleSelectUser = (user : UserI)=>{
-    setSelectedUser(user)
-  }
+  const handleSelectUser = (user: UserI) => {
+    setSelectedUser(user);
+    setIsSidebarOpen(false);
+  };
 
   return (
     <div className="flex flex-col gap-1">
