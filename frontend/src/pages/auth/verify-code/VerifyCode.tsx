@@ -56,6 +56,11 @@ const VerifyCode = () => {
     e.preventDefault()
     signin(code)
   }
+
+  useEffect(()=>{
+    document.title = 'Verify Code'
+  } , [])
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsResendCodeActive(false);

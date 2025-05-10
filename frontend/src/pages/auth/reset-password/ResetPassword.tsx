@@ -10,6 +10,7 @@ import { axiosInstance } from "../../../configs/axios";
 import { toast } from "sonner";
 import { useState } from "react";
 import FormError from "../../../components/ui/auth/FromError";
+import {useEffect} from 'react'
 
 const schema = z
   .object({
@@ -73,6 +74,10 @@ const ResetPassword = () => {
   const onSubmit = (data: ResetPasswordSchemaType) => {
     resetPassword(data);
   };
+
+   useEffect(()=>{
+      document.title = 'Reset Password'
+    } , [])
 
   return (
     <AuthLayout

@@ -10,8 +10,7 @@ import { axiosInstance } from "../../../configs/axios";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import FormError from "../../../components/ui/auth/FromError";
-import { useState } from "react";
-
+import { useState  , useEffect} from "react";
 
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email Format"),
@@ -53,6 +52,10 @@ const ForgotPassword = () => {
   const onSubmit = (data: ForgotPasswordSchemaType) => {
     mutate(data);
   };
+
+   useEffect(()=>{
+      document.title = 'Forgot Password'
+    } , [])
 
   return (
     <AuthLayout

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpSchemaType, schema } from "../../../validations/signupSchema";
 import { Eye, EyeOff, Loader } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormError from "../../../components/ui/auth/FromError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../../configs/axios";
@@ -46,6 +46,10 @@ const SignUp = () => {
   const onSubmit = async (data: SignUpSchemaType) => {
     signup(data)
   };
+
+   useEffect(()=>{
+      document.title = 'SignUp'
+    } , [])
 
   return (
     <AuthLayout

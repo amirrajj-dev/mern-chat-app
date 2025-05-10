@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import AuthLayout from "../../../layouts/AuthLAyout";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmailSignIn from "../../../components/ui/auth/signin/EmailSignin";
 import PhoneSignIn from "../../../components/ui/auth/signin/phoneSignin";
 
 const SignIn = () => {
   const [authMethod, setAuthMethod] = useState<"phone" | "email">("phone");
-
+  useEffect(()=>{
+    document.title = 'SignIn'
+  } , [])
   return (
     <AuthLayout
       title="Welcome Back"

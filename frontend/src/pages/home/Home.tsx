@@ -5,10 +5,13 @@ import { Menu } from "lucide-react";
 import Prefrences from "../../components/ui/prefrences/Prefrences";
 import { useSidebar } from "../../store/useSidebar";
 import AnimatedBackground from "../../components/ui/background/AnimateBackground";
+import {useEffect} from 'react'
 
 const Home = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useSidebar();
-
+  useEffect(()=>{
+    document.title = 'Mern Chat Application ⚡'
+  } , [])
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-primary to-accent p-2 sm:p-4 flex flex-col gap-1 items-center justify-center overflow-hidden">
       <AnimatedBackground />
