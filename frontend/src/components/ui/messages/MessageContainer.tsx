@@ -1,4 +1,3 @@
-import { useMeQuery } from '../../../hooks/useMeQuery'
 import { useConversationStore } from '../../../store/useConveration'
 import MessageHeader from './ui/MessageHeader'
 import MessageInput from './ui/MessageInput'

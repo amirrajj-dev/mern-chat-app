@@ -2,10 +2,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Send, Smile } from "lucide-react";
+import { Loader2, Send, Smile } from "lucide-react";
 import { useTheme } from "../../../../store/useTheme";
 import { useSoundStore } from "../../../../store/useSound";
 import useSound from "use-sound";
+import { useConversationStore } from "../../../../store/useConveration";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../../../configs/axios";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 type EmojiObject = {
   native: string;
 };
@@ -23,6 +28,23 @@ const MessageInput = () => {
   const [keyStroke3Sound] = useSound('/sounds/keystroke3.mp3');
   const [keyStroke4Sound] = useSound('/sounds/keystroke4.mp3');
   const [mouseSoundClick] = useSound('/sounds/mouse-click.mp3')
+  const {selectedUser} = useConversationStore()
+  const queryClient = useQueryClient()
+  const {mutate : sendMessage , isPending} = useMutation({
+    mutationFn: async (message: string) =>{
+      const {data} = await axiosInstance.post(`/api/messages/send/${selectedUser?._id}` , {message})
+      console.log(data);
+      return data.data
+    },
+    onSuccess: () => {
+      setMessage("");
+      inputRef.current?.focus();
+      queryClient.invalidateQueries({queryKey : ["messages", selectedUser?._id]});
+    },
+    onError : (err : AxiosError<{message : string}>)=>{
+      toast.error(err.response?.data.message || 'Failed to send message')
+    }
+  })
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
@@ -49,6 +71,9 @@ const MessageInput = () => {
     if (soundEnabled){
       mouseSoundClick()
     }
+    if (message.trim().length > 0) {
+      sendMessage(message);
+    }
   }
 
   return (
@@ -57,6 +82,12 @@ const MessageInput = () => {
         ref={inputRef}
         id="messageInput"
         value={message}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+          }
+        }}        
         onChange={(e) =>{setMessage(e.target.value); if (soundEnabled) {keyStroke1Sound(); keyStroke2Sound(); keyStroke3Sound(); keyStroke4Sound();}} }
         type="text"
         placeholder="Send a message"
@@ -77,9 +108,16 @@ const MessageInput = () => {
       <button
       onClick={handleSendMessage}
         aria-label="Send message"
+        disabled={isPending}
         className="absolute right-6 bottom-6 btn btn-circle bg-base-content/5 text-base-content/70 hover:bg-base-content/10 border-none"
       >
-        <Send className="w-6 h-6" />
+        {isPending ? (
+          <span className="loading loading-spinner loading-md">
+            <Loader2/>
+          </span>
+        ) : (
+          <Send className="w-6 h-6" />
+        )}
       </button>
 
       {/* Emoji Picker */}

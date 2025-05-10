@@ -5,10 +5,11 @@ import { useConversationStore } from "../../../../store/useConveration";
 import { axiosInstance } from "../../../../configs/axios";
 import { MessageI } from "../../../../interfaces/interfaces";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 const Messages = () => {
   const { selectedUser } = useConversationStore();
-
+  const bottomRef = useRef<HTMLDivElement>(null);
   const {
     data: messages,
     isLoading,
@@ -23,11 +24,19 @@ const Messages = () => {
   });
 
   const handleStartConversationClick = () => {
-    const inputElement = document.getElementById("messageInput") as HTMLInputElement;
+    const inputElement = document.getElementById(
+      "messageInput"
+    ) as HTMLInputElement;
     if (inputElement) {
       inputElement.focus();
     }
   };
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   if (!selectedUser) return null;
 
@@ -46,22 +55,31 @@ const Messages = () => {
       <div className="p-6 text-red-500 text-sm">Failed to load messages.</div>
     );
   }
-console.log(messages);
+
   return (
-    <div className="p-6 flex flex-col max-h-[calc(100vh-200px)] gap-4 overflow-y-auto">
+    <div className="p-6 flex flex-col max-h-[calc(100vh-200px)] gap-4">
       {messages?.length ? (
-        messages.map(({ _id, senderId, receiverId , message, createdAt }) => (
-          <MessageBubble
-            key={_id}
-            sender={senderId._id === selectedUser._id ? "chat" : "currentUser"}
-            text={message}
-            avatar={selectedUser._id === receiverId._id ? senderId.avatar : senderId.avatar}
-            timestamp={new Date(createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          />
-        ))
+        <>
+          {messages.map(({ _id, senderId, receiverId, message, createdAt }) => (
+            <MessageBubble
+              key={_id}
+              sender={
+                senderId._id === selectedUser._id ? "chat" : "currentUser"
+              }
+              text={message}
+              avatar={
+                selectedUser._id === receiverId._id
+                  ? senderId.avatar
+                  : senderId.avatar
+              }
+              timestamp={new Date(createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            />
+          ))}
+          <div ref={bottomRef} />
+        </>
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
@@ -103,7 +121,7 @@ console.log(messages);
           </motion.div>
 
           <motion.button
-          onClick={handleStartConversationClick}
+            onClick={handleStartConversationClick}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="btn btn-primary btn-sm sm:btn-md rounded-full shadow-md mt-2"
