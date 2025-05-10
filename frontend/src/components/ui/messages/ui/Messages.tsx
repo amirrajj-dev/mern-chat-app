@@ -7,12 +7,14 @@ import { MessageI } from "../../../../interfaces/interfaces";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { useSocketContext } from "../../../../contexts/SocketContext";
+import useSound from "use-sound";
 
 const Messages = () => {
   const { selectedUser } = useConversationStore();
   const bottomRef = useRef<HTMLDivElement>(null);
   const { socket } = useSocketContext();
   const queryClient = useQueryClient();
+  const [notificationSound] = useSound('/sounds/notification.mp3')
   const {
     data: messages,
     isLoading,
@@ -52,6 +54,8 @@ const Messages = () => {
           return [...oldData, message];
         }
       );
+      console.log('before sound');
+      notificationSound()
     };
 
     socket.on("newMessage", handleNewMessage);
