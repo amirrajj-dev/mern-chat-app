@@ -407,7 +407,7 @@ export const resetPassword = async (req, res, next) => {
         .status(400)
         .json({ message: "Invalid or expired token", success: false });
     }
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await hash(password, 12);
     await usersModel.findByIdAndUpdate(user._id, {
       password: hashedPassword,
       resetToken: undefined,

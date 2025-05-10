@@ -12,7 +12,7 @@ import { AxiosError } from "axios";
 import FormError from "../../../components/ui/auth/FromError";
 import { useState } from "react";
 
-// Validation Schema
+
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email Format"),
 });
