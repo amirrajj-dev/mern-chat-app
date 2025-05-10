@@ -4,7 +4,7 @@ import { MoveLeft } from "lucide-react";
 
 const NotFound = () => {
   return (
-    <div className="h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent p-4 sm:p-6 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -31,7 +31,7 @@ const NotFound = () => {
             duration: 3,
             ease: "easeInOut",
           }}
-          className="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-4"
+          className="text-8xl font-extrabold text-primary mb-4"
         >
           404
         </motion.h1>
@@ -50,7 +50,7 @@ const NotFound = () => {
         >
           <Link
             to="/"
-            className="btn bg-gradient-to-r from-primary to-accent text-base-content gap-2 hover:gap-3 transition-all"
+            className="btn btn-primary text-base-content gap-2 hover:gap-3 transition-all"
           >
             <MoveLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
             Back to Home
