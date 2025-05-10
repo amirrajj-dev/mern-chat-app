@@ -24,13 +24,13 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen chat-bg items-center justify-center flex-col gap-4">
+      <div className="flex h-screen bg-gradient-to-br from-primary to-accent items-center justify-center flex-col gap-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <Loader className="animate-spin size-12 text-primary" />
+          <Loader className="animate-spin size-14 text-primary" />
         </motion.div>
         <motion.p
           initial={{ opacity: 0 }}

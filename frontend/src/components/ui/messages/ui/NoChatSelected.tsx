@@ -8,7 +8,7 @@ const NoChatSelected = () => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="text-center max-w-md mx-auto px-6 py-12 rounded-xl bg-base-200/70 backdrop-blur-md shadow-lg"
+      className="text-center max-w-md mx-5 sm:mx-auto px-6 py-12 rounded-xl bg-base-200/70 backdrop-blur-md shadow-lg"
     >
       <div className="relative w-32 h-32 mx-auto mb-6">
         <motion.div
