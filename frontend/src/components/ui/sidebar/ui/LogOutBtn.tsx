@@ -5,16 +5,19 @@ import { axiosInstance } from "../../../../configs/axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useConversationStore } from "../../../../store/useConveration";
+import { useSocketContext } from "../../../../contexts/SocketContext";
 
 const LogOutBtn = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const {disconnectSocket} = useSocketContext()
   const {setSelectedUser} = useConversationStore()
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       await axiosInstance.get("/api/auth/signout");
     },
     onSuccess: () => {
+      disconnectSocket();
       toast.success("Logged out successfully");
       queryClient.removeQueries({ queryKey: ["me"] });
       setSelectedUser(null)

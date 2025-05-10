@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { useConversationStore } from "../../../../store/useConveration";
+import { useSocketContext } from "../../../../contexts/SocketContext";
 
 const MessageHeader = () => {
   const {selectedUser} = useConversationStore()
+  const {onlineUsers} = useSocketContext()
+  console.log(onlineUsers);
+  const isOnline = onlineUsers.includes(selectedUser?._id as string)
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -15,7 +19,12 @@ const MessageHeader = () => {
         alt="user image"
         className="size-10 rounded-full"
       />
-      <span className="ml-3 font-bold">{selectedUser?.name}</span>
+      <div className="flex flex-col ml-3">
+      <span className="font-bold">{selectedUser?.name}</span>
+      <span className="font-extralight font-mono text-sm text-primary">
+        {isOnline ? 'online' : 'last seen recently'}
+      </span>
+      </div>
     </motion.div>
   );
 };

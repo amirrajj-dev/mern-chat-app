@@ -34,7 +34,6 @@ const EmailSignIn = () => {
       return res.data;
     },
     onSuccess: (data: any) => {
-      console.log(data);
       queryClient.setQueryData(["me"], data.user);
       toast.success("Signed in successfully");
       navigate("/");

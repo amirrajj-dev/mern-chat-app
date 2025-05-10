@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import React, { useState } from 'react';
 import { UserI } from "../../../../interfaces/interfaces";
 import { useConversationStore } from "../../../../store/useConveration";
+import { useSocketContext } from "../../../../contexts/SocketContext";
 
 interface ConversationProps {
   user : UserI;
@@ -9,10 +10,12 @@ interface ConversationProps {
 }
 
 const Conversation : React.FC<ConversationProps> = ({user , handleSelectUser}) => {
-  const [isOnline, setIsOnline] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const {selectedUser} = useConversationStore()
   const isSelected = user._id === selectedUser?._id;
+  
+  const {onlineUsers} = useSocketContext()
+  const isOnline = onlineUsers.includes(user._id)
   return (
     <motion.div 
       onClick={() => handleSelectUser(user)}
