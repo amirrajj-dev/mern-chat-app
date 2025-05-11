@@ -54,7 +54,6 @@ const Messages = () => {
           return [...oldData, message];
         }
       );
-      console.log('before sound');
       notificationSound()
     };
 
