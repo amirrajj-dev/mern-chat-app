@@ -35,7 +35,7 @@ const SocketContextProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (currentUser) {
-      const newSocket = io("http://localhost:5000", {
+      const newSocket = io("https://mern-chat-app-pvv3.onrender.com", {
         query: { userId: currentUser._id },
       });
       setSocket(newSocket);
