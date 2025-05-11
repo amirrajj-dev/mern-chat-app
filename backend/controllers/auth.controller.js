@@ -364,7 +364,7 @@ export const forgotPassword = async (req, res, next) => {
 
     const resetUrl = `${
       process.env.FRONTEND_URL || "http://localhost:5173"
-    }/reset-password/${resetToken}`;
+    }/auth/reset-password/${resetToken}`;
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
